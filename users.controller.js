@@ -1,6 +1,7 @@
-module.exports = function() {
+module.exports = function() { 
 
   const usercopy = require("./usercopy.js");
+  const jsonrc = require("./jsonrc.js");
 
   // constructor function
   const FS = require("fs");
@@ -14,14 +15,14 @@ module.exports = function() {
   
   // list() function
   this.list = function() {
-    return this.users;
+    return new jsonrc(200, "OK", this.users); 
   }
   
   // get(id) function
   this.get = function(Id) {
     for(user of this.users) {
       if(user.Id === Id) {
-        return user;
+        return new jsonrc(200, "OK", user);
       }
     }
     return null;
@@ -32,23 +33,25 @@ module.exports = function() {
     user.Id = this.users.length + 1;
     this.users.push(user);
     this.flush();
+    return new jsonrc(200, "OK", null);
   }
   
   // change(user) function
   this.change = function(user) {
     var user2 = this.get(user.Id);
     if(user2 == null) {
-      return -1;
+      return new jsonrc(204, "ERROR", "Not found.")
     }
     usercopy(user, user2);
     this.flush();
+    return new jsonrc(200, "OK", null);
   }
   
   // remove(user) function
   this.remove = function(user) {
     var user2 = this.get(user.Id);
     if(user2 == null) {
-      return -1;
+      return new jsonrc(204, "ERROR", "Not found.")
     }
     for(idx = 0; idx < this.users.length; idx++) {
       var userx = this.users[idx];
@@ -57,5 +60,6 @@ module.exports = function() {
       }
     }
     this.flush();
+    return new jsonrc(200, "OK", null);
   }
 }
